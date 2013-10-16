@@ -49,7 +49,8 @@ void output(FILE* f, unsigned char* data, size_t datac) {
 
 size_t assemble(FILE* f, unsigned char* out[]) {
     char buff[256];
-    int i,n = 0;
+    int i = 0;
+    int n = 0;
     int c;
 
     //start with room for 32 instructions
