@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g
-SOURCES=main.c parser.c
+SOURCES=main.c assembler.c parser.c
 EXECUTABLE=hackasm
 
 all: $(EXECUTABLE)
