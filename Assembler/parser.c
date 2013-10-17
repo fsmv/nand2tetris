@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "parser.h"
 
-instruction* parseLine(char line[]) {
+instruction* parseInstruction(char line[]) {
     line = trim(line);
     char* comment = strstr(line, "//");
     if(comment != NULL) {
