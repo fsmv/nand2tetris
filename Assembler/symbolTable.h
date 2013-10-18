@@ -5,16 +5,16 @@
 
 typedef struct {
     unsigned short address;
-    char* name;
+    char name[128];
 } symbol;
 
 typedef struct {
     size_t tableLen;
     size_t size;
-    symbol* symbols;
+    symbol *symbols;
 } symbolTable;
 
-extern const symbol* defaultSymbols;
+extern const symbol defaultSymbols[];
 /* made as extern const intead of #define because it depends on the definition of
    defaultSymbols which is extern const because I can't #define an array */
 extern const size_t numDefaultSymbols; 
@@ -24,7 +24,12 @@ extern const size_t numDefaultSymbols;
  * 
  * ignores NULL pointers within the array
  */
-void copySymbols(symbolTable* dest, symbol* src, size_t srclen);
+void copySymbols(symbolTable *dest, const symbol* src, const size_t srclen);
+
+/**
+ * returns the address associated with the symbol or 0xffff if it wasn't found
+ */
+unsigned short findBySymbol(char *symbol, symbolTable* st);
 
 /**
  * hashes the specified symbol into the hash table and resizes it if it becomes
@@ -32,29 +37,24 @@ void copySymbols(symbolTable* dest, symbol* src, size_t srclen);
  *
  * uses linear probing for collisions
  */
-void addSymbol(char* symbol, symbolTable* st);
-
-/**
- * returns the address associated with the symbol or 0xffff if it wasn't found
- */
-unsigned short findBySymbol(char* symbol, symbolTable* st);
+void addSymbol(const char *symbol, unsigned short address, symbolTable *st);
 
 /**
  * doubles the size of the table's array by rehashing the elements
  *
  * assumes that the array is allocated on the stack
  */
-void expand(symbolTable* st);
+void expand(symbolTable *st);
 
 /**
  * returns the hash for a string in a table of size M
  */
-size_t hash(char* key, size_t M);
+size_t hash(const char *key, size_t M);
 
 /**
  * Parses the line for symbols to add, assumes this is being done in order
  */
-void parseSymbols(char* line, symbolTable* st);
+void parseSymbols(char *line, symbolTable *st);
 
 /**
  * Replaces the symbols in the string with addresses from the table
@@ -62,6 +62,6 @@ void parseSymbols(char* line, symbolTable* st);
  * modifies the original string and kills the program if the string
  * reqests a symbol not in the table
  */
-void replaceSymbols(char* line, symbolTable* st);
+void replaceSymbols(char *line, symbolTable *st);
 
 #endif

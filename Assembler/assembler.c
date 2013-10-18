@@ -73,7 +73,7 @@ size_t assemble(FILE* f, unsigned char* out[]) {
             i = 0;
 
             instruction* op;
-            op = parseLine(buff);
+            op = parseInstruction(buff);
 
             if(op != NULL) {
                 unsigned short data;
