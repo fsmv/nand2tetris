@@ -2,10 +2,11 @@
 #define SYMBOLTABLE_H
 
 #define INITIAL_SIZE 97
+#define SNF 0xffff
 
 typedef struct {
     unsigned short address;
-    char name[128];
+    char name[64];
 } symbol;
 
 typedef struct {
@@ -18,6 +19,19 @@ extern const symbol defaultSymbols[];
 /* made as extern const intead of #define because it depends on the definition of
    defaultSymbols which is extern const because I can't #define an array */
 extern const size_t numDefaultSymbols; 
+
+/**
+ * Parses the line for symbols to add, assumes this is being done in order
+ */
+void parseSymbols(char *line, symbolTable *st);
+
+/**
+ * Replaces the symbols in the string with addresses from the table
+ * 
+ * modifies the original string and kills the program if the string
+ * reqests a symbol not in the table
+ */
+void replaceSymbols(char *line, symbolTable *st);
 
 /**
  * hashes the symbols in the src array into the dest table
@@ -50,18 +64,5 @@ void expand(symbolTable *st);
  * returns the hash for a string in a table of size M
  */
 size_t hash(const char *key, size_t M);
-
-/**
- * Parses the line for symbols to add, assumes this is being done in order
- */
-void parseSymbols(char *line, symbolTable *st);
-
-/**
- * Replaces the symbols in the string with addresses from the table
- * 
- * modifies the original string and kills the program if the string
- * reqests a symbol not in the table
- */
-void replaceSymbols(char *line, symbolTable *st);
 
 #endif

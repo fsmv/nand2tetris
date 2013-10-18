@@ -2,7 +2,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "assembler.h"
 #include "symbolTable.h"
+
+void parseSymbols(char *line, symbolTable *st) {
+    
+}
 
 void copySymbols(symbolTable *dest, const symbol *src, const size_t srclen) {
     int i;
@@ -19,8 +24,7 @@ unsigned short findBySymbol(char *name, symbolTable *st) {
         h = h + 1 % st->tableLen;
 
     if(strlen(st->symbols[h].name) == 0) {
-        fprintf(stderr, "Error, symbol not defined: %s\n", name);
-        abort();
+        return SNF;
     }
 
     return st->symbols[h].address;

@@ -1,7 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#define KNF 0xffff
+#define KNF  0xff
+#define KERR 0xef
 
 typedef enum {A, C} optype;
 
@@ -14,7 +15,7 @@ typedef struct {
 } instruction;
 
 typedef struct {
-    char* name;
+    char *name;
     unsigned short data;
 } kvp;
 
@@ -23,22 +24,47 @@ typedef struct {
     kvp list[];
 } map;
 
-/* TODO: make these hash tables for speed, we probably won't really need it though and it makes these lists ugly in the code */
-extern const map ops;
-extern const map jumps;
-extern const map dests;
 
-instruction* parseInstruction(char line[]);
+/**
+ * Parses an instruction returning NULL for a blank line (or a comment) or
+ * a heap-allocated instruction with the values correctly filled.
+ *
+ * Prints an error message and kills the program if an invalid command is parsed
+ */
+instruction* parseInstruction(char *line);
+
+/**
+ * Parses a c-type instruction (dest=comp;jump) where the fields can be filled
+ * only by elements of the respective maps and both dest and comp can be ommited
+ * 
+ * Assumes the string is a C-type instruction with no whitespace or comments
+ * surrounding it (things like dest = comp;\tjump are allowed but not
+ * dest=comp;jump\t)
+ *
+ * Sets comp, dest, and jump to their codes or KNF if that field was not present
+ * and KERR if invalid
+ */
+void parseCType(char *line, unsigned short *comp, unsigned char *dest, unsigned char *jump);
+
+/**
+ * returns whether the line is a valid instruction or not
+ */
+int isIstruction(char *line);
+
+/**
+ * removes comments and trims the line
+ */
+char *cleanLine(char *line);
 
 /**
  * Removes traling whitespace (puts a \0 at the new end) and returns a pointer
  * to the first non-whitespace char
  */
-char* trim(char* str);
+static char *trim(char *str);
 
 /**
  * returns the value associated with the key in the provided map or returns
- * KNF if the key was not found
+ * KERR if the key was not in the map
  */
-unsigned short getVal(char* key, const map* list);
+static unsigned short getVal(const char *key, const map *list);
 #endif
