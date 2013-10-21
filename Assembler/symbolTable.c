@@ -36,10 +36,19 @@ void parseSymbols(char *line, symbolTable *st) {
 }
 
 void replaceSymbols(char *line, symbolTable *st) {
+    static unsigned short varaddr = 16;
+    
     line = cleanLine(line);
     if(line[0] == '@') {
         if(line[1] != '\0' && !(line[1] <= '9' && line[1] >= '0')) {
             unsigned short addr = findBySymbol(line+1, st);
+            
+            if(addr == SNF) {
+                addr = varaddr;
+                addSymbol(line+1, varaddr, st);
+                varaddr++;
+            }
+
             sprintf(line+1, "%d", addr);
         }
     }
@@ -49,6 +58,8 @@ void initDefault(symbolTable *st) {
     st->symbols = calloc(INITIAL_SIZE, sizeof(symbol));
     st->tableLen = INITIAL_SIZE;
     st->size = 0;
+
+    st->symbols = calloc(INITIAL_SIZE, sizeof(symbol));
 
     copySymbols(st, defaultSymbols, numDefaultSymbols);
 }
@@ -77,12 +88,12 @@ unsigned short findBySymbol(char *name, symbolTable *st) {
 void addSymbol(const char *name, unsigned short address, symbolTable *st) {
     int h = hash(name, st->tableLen);
     while(strlen(st->symbols[h].name) != 0)
-        h = h + 1 % st->tableLen;
+        h = (h + 1) % st->tableLen;
     
     symbol sym;
     sym.address = address;
     strcpy(sym.name, name);
-
+    
     st->symbols[h] = sym;
 
     if(st->size++ >= st->tableLen/2) expand(st);
@@ -93,7 +104,7 @@ void expand(symbolTable *st) {
     size_t oldLen = st->tableLen;
 
     /* double the table size and add 1 on expansion */
-    st->tableLen = (st->tableLen << 2) + 1;
+    st->tableLen = (st->tableLen * 2) + 1;
     st->symbols = calloc(st->tableLen, sizeof(symbol));
     st->size = 0;
 
