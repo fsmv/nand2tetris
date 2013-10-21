@@ -12,8 +12,12 @@ void parseSymbols(char *line, symbolTable *st) {
         labelAddr++;
         return;
     }
+    
+    line = cleanLine(line);
+    if(strlen(line) == 0) {
+        return;
+    }
 
-    /* isInstruction trims the line, maybe I shouldn't assume that... */
     if(line[0] == '(') {
         if(line[1] != '\0' && !(line[1] <= '9' && line[1] >= '0')) {
             char *end = strchr(line, ')');
@@ -31,8 +35,21 @@ void parseSymbols(char *line, symbolTable *st) {
     abort();
 }
 
+void replaceSymbols(char *line, symbolTable *st) {
+    line = cleanLine(line);
+    if(line[0] == '@') {
+        if(line[1] != '\0' && !(line[1] <= '9' && line[1] >= '0')) {
+            unsigned short addr = findBySymbol(line+1, st);
+            sprintf(line+1, "%d", addr);
+        }
+    }
+}
+
 void initDefault(symbolTable *st) {
     st->symbols = calloc(INITIAL_SIZE, sizeof(symbol));
+    st->tableLen = INITIAL_SIZE;
+    st->size = 0;
+
     copySymbols(st, defaultSymbols, numDefaultSymbols);
 }
 

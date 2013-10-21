@@ -4,6 +4,7 @@
 
 #include "assembler.h"
 #include "parser.h"
+#include "symbolTable.h"
 
 size_t putBytes(unsigned short bytes, unsigned char **arr, size_t index, size_t size) {
     int result = size;
@@ -103,6 +104,8 @@ size_t assemble(FILE *f, unsigned char **out) {
         if(c == EOF && firstPass) {
             c++; /* make sure c != EOF so we go again */
             firstPass = 0;
+            rewind(f);
+            i = 0;
         }
     }while(c != EOF);
 

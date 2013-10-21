@@ -60,6 +60,8 @@ instruction* parseInstruction(char *line) {
     
     if(strlen(line) == 0) return NULL;
 
+    if(line[0] == '(') return NULL;
+
     if(line[0] == '@') { //A-type
         if(line[1] <= '9' && line[1] >= '0') {
             instruction* result = malloc(sizeof(instruction));
@@ -136,13 +138,17 @@ void parseCType(char *line, unsigned short *comp, unsigned char *dest, unsigned 
             *comp = getVal(dpos, &ops);
         }else{
             *dest = KNF;
-            trim(line);
+            line = trim(line);
             *comp = getVal(line, &ops);
         }
 }
 
 int isInstruction(char *line) {
-    unsigned short comp, dest, jump;
+    line = cleanLine(line);
+    if(line[0] == '@') return 1;
+
+    unsigned short comp;
+    unsigned char dest, jump;
     parseCType(line, &comp, &dest, &jump);
     return comp != KERR;
 }
@@ -166,7 +172,7 @@ unsigned short getVal(const char *key, const map *list) {
         }
     }
 
-    return KNF;
+    return KERR;
 }
 
 char *trim(char *str) {
