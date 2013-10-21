@@ -67,4 +67,5 @@ static char *trim(char *str);
  * KERR if the key was not in the map
  */
 static unsigned short getVal(const char *key, const map *list);
+
 #endif

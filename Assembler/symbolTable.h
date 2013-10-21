@@ -46,12 +46,12 @@ void initDefault(symbolTable *st);
  * 
  * ignores NULL pointers within the array
  */
-void copySymbols(symbolTable *dest, const symbol* src, const size_t srclen);
+void copySymbols(symbolTable *dest, const symbol *src, const size_t srclen);
 
 /**
  * returns the address associated with the symbol or 0xffff if it wasn't found
  */
-unsigned short findBySymbol(char *symbol, symbolTable* st);
+unsigned short findBySymbol(char *symbol, symbolTable *st);
 
 /**
  * hashes the specified symbol into the hash table and resizes it if it becomes

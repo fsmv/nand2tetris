@@ -55,7 +55,7 @@ static const map dests = {
     }
 };
 
-instruction* parseInstruction(char *line) {
+instruction *parseInstruction(char *line) {
     line = cleanLine(line);
     
     if(strlen(line) == 0) return NULL;
@@ -96,7 +96,7 @@ instruction* parseInstruction(char *line) {
             abort();
         }
 
-        instruction* result = malloc(sizeof(instruction));
+        instruction *result = malloc(sizeof(instruction));
         result->type = C;
         result->comp = comp;
         result->dest = dest;
@@ -188,5 +188,3 @@ char *trim(char *str) {
 
     return str;
 }
-
-
