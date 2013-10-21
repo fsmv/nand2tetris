@@ -2,11 +2,38 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "assembler.h"
+#include "parser.h"
 #include "symbolTable.h"
 
 void parseSymbols(char *line, symbolTable *st) {
+    static unsigned short labelAddr = 0;
     
+    if(isInstruction(line)) {
+        labelAddr++;
+        return;
+    }
+
+    /* isInstruction trims the line, maybe I shouldn't assume that... */
+    if(line[0] == '(') {
+        if(line[1] != '\0' && !(line[1] <= '9' && line[1] >= '0')) {
+            char *end = strchr(line, ')');
+            if(end != NULL) {
+                *end = '\0';
+                line++;
+
+                addSymbol(line, labelAddr, st);
+                return;
+            }
+        }
+    }
+
+    fprintf(stderr, "Sytax error on symbol, addr: %d\n", labelAddr);
+    abort();
+}
+
+void initDefault(symbolTable *st) {
+    st->symbols = calloc(INITIAL_SIZE, sizeof(symbol));
+    copySymbols(st, defaultSymbols, numDefaultSymbols);
 }
 
 void copySymbols(symbolTable *dest, const symbol *src, const size_t srclen) {

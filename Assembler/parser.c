@@ -136,9 +136,15 @@ void parseCType(char *line, unsigned short *comp, unsigned char *dest, unsigned 
             *comp = getVal(dpos, &ops);
         }else{
             *dest = KNF;
-            if(jpos != NULL) trim(line);
+            trim(line);
             *comp = getVal(line, &ops);
         }
+}
+
+int isInstruction(char *line) {
+    unsigned short comp, dest, jump;
+    parseCType(line, &comp, &dest, &jump);
+    return comp != KERR;
 }
 
 char *cleanLine(char *line) {
