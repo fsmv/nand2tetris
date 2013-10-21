@@ -22,6 +22,8 @@ extern const size_t numDefaultSymbols;
 
 /**
  * Parses the line for symbols to add, assumes this is being done in order
+ *
+ * throws an error if an invalid symbol line is passed
  */
 void parseSymbols(char *line, symbolTable *st);
 
@@ -32,6 +34,12 @@ void parseSymbols(char *line, symbolTable *st);
  * reqests a symbol not in the table
  */
 void replaceSymbols(char *line, symbolTable *st);
+
+/**
+ * Initializes the array in st with the default size and adds the default
+ * symbols to it
+ */
+void initDefault(symbolTable *st);
 
 /**
  * hashes the symbols in the src array into the dest table

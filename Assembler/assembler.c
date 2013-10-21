@@ -5,11 +5,11 @@
 #include "assembler.h"
 #include "parser.h"
 
-size_t putBytes(unsigned short bytes, unsigned char** arr, size_t index, size_t size) {
+size_t putBytes(unsigned short bytes, unsigned char **arr, size_t index, size_t size) {
     int result = size;
 
     if(index + 2 > size) {
-        char* temp = malloc(2*size);
+        char *temp = malloc(2*size);
         memcpy(temp, *arr, size);
         free(*arr);
         *arr = temp;
@@ -23,14 +23,14 @@ size_t putBytes(unsigned short bytes, unsigned char** arr, size_t index, size_t 
     return result;
 }
 
-void shrink(unsigned char** arr, size_t newlen) {
-    char* temp = malloc(newlen);
+void shrink(unsigned char **arr, size_t newlen) {
+    char *temp = malloc(newlen);
     memcpy(temp, *arr, newlen);
     free(*arr);
     *arr = temp;
 }
 
-void output(FILE* f, unsigned char* data, size_t datac) {
+void output(FILE *f, unsigned char *data, size_t datac) {
     int i;
     for(i = 0; i < datac/2; i++) {
         unsigned short code = (data[2*i] << 8) + (data[2*i+1]);
@@ -47,14 +47,17 @@ void output(FILE* f, unsigned char* data, size_t datac) {
     }
 }
 
-size_t assemble(FILE* f, unsigned char* out[]) {
+size_t assemble(FILE *f, unsigned char **out) {
     char buff[256];
     int i = 0;
     int n = 0;
     int c;
+    int firstPass = 1;
+    symbolTable st;
+    initDefault(&st);
 
     //start with room for 32 instructions
-    unsigned char* result = malloc(64);
+    unsigned char *result = malloc(64);
     size_t rsize = 64;
 
     do {
@@ -71,24 +74,35 @@ size_t assemble(FILE* f, unsigned char* out[]) {
         }else{
             buff[i] = '\0';
             i = 0;
+            
+            if(firstPass) {
+                parseSymbols(buff, &st);
+            }else{
+                replaceSymbols(buff, &st);
 
-            instruction* op;
-            op = parseInstruction(buff);
+                instruction* op;
+                op = parseInstruction(buff);
 
-            if(op != NULL) {
-                unsigned short data;
-                if(op->type == A) {
-                    data = op->literal;
-                    data = data & 0x7fff;
-                }else{
-                    data = (0x7 << 13) + (op->comp << 6) + (op->dest << 3) + (op->jump);
+                if(op != NULL) {
+                    unsigned short data;
+                    if(op->type == A) {
+                        data = op->literal;
+                        data = data & 0x7fff;
+                    }else{
+                        data = (0x7 << 13) + (op->comp << 6) + (op->dest << 3) + (op->jump);
+                    }
+
+                    rsize = putBytes(data, &result, 2*n, rsize);
+                    free(op);
+
+                    n++;
                 }
-
-                rsize = putBytes(data, &result, 2*n, rsize);
-                free(op);
-
-                n++;
             }
+        }
+
+        if(c == EOF && firstPass) {
+            c++; /* make sure c != EOF so we go again */
+            firstPass = 0;
         }
     }while(c != EOF);
 
