@@ -59,8 +59,6 @@ void initDefault(symbolTable *st) {
     st->tableLen = INITIAL_SIZE;
     st->size = 0;
 
-    st->symbols = calloc(INITIAL_SIZE, sizeof(symbol));
-
     copySymbols(st, defaultSymbols, numDefaultSymbols);
 }
 
