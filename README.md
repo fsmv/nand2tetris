@@ -28,3 +28,7 @@ wasn't super into learning veralog.
 
 This part will never be completed but I'll just go ahead and leave it up in this
 branch anyway.
+
+Actually it looks like someone else has done this!
+
+[![demonstration video](http://img.youtube.com/vi/UHty1KKjaZw/0.jpg)](http://www.youtube.com/watch?v=UHty1KKjaZw)
