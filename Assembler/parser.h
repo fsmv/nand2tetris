@@ -49,7 +49,7 @@ void parseCType(char *line, unsigned short *comp, unsigned char *dest, unsigned 
 /**
  * returns whether the line is a valid instruction or not
  */
-int isIstruction(char *line);
+int isInstruction(char *line);
 
 /**
  * removes comments and trims the line
